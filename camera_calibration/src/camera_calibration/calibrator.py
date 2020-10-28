@@ -51,6 +51,27 @@ import time
 from distutils.version import LooseVersion
 import sys
 from enum import Enum
+from os.path import expanduser
+import datetime
+
+
+OUTPUT_TEMPLATE = """<?xml version="1.0"?>
+<opencv_storage>
+    <image_width>{width}</image_width>
+    <image_height>{height}</image_height>
+    <raw_camera_matrix type_id="opencv-matrix">
+        <rows>3</rows>
+        <cols>3</cols>
+        <dt>d</dt>
+        <data>{camera_matrix}</data>
+    </raw_camera_matrix>
+    <distortion_coefficients type_id="opencv-matrix">
+        <rows>5</rows>
+        <cols>1</cols>
+        <dt>d</dt>
+        <data>{distortion_coefficients}</data>
+    </distortion_coefficients>
+</opencv_storage>"""
 
 # Supported camera models
 class CAMERA_MODEL(Enum):
@@ -634,6 +655,17 @@ class Calibrator(object):
         return calmessage
 
     @staticmethod
+    def lrxml(d, k, r, p, size):
+        camera_matrix_flattened = " ".join([" ".join([str(k[j,i]) for i in range(3)]) for j in range(3)])
+        distortion_coefficients = " ".join([str(x) for x in d.flat])
+        return OUTPUT_TEMPLATE.format(
+            width=str(size[0]),
+            height=str(size[1]),
+            camera_matrix=camera_matrix_flattened,
+            distortion_coefficients=distortion_coefficients
+        )
+
+    @staticmethod
     def lryaml(name, d, k, r, p, size, cam_model):
         def format_mat(x, precision):
             return ("[%s]" % (
@@ -869,6 +901,14 @@ class MonoCalibrator(Calibrator):
     def ost(self):
         return self.lrost(self.name, self.distortion, self.intrinsics, self.R, self.P, self.size)
 
+    def do_xmlfile_save(self):
+        xml_contents = self.lrxml(self.distortion, self.intrinsics, self.R, self.P, self.size)
+        print(xml_contents)
+        xml_path = expanduser("~") + "/calibration_" + datetime.datetime.now().isoformat() + ".xml"
+        with open(xml_path, "w") as f:
+            f.write(xml_contents)
+        print("saved xml to " + xml_path)
+
     def yaml(self):
         return self.lryaml(self.name, self.distortion, self.intrinsics, self.R, self.P, self.size, self.camera_model)
 
@@ -1016,6 +1056,7 @@ class MonoCalibrator(Calibrator):
         # DEBUG
         print((self.report()))
         print((self.ost()))
+        self.do_xmlfile_save()
 
     def do_tarfile_save(self, tf):
         """ Write images and calibration solution to a tarfile object """
