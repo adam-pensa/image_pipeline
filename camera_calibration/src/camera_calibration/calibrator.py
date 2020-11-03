@@ -57,7 +57,7 @@ import datetime
 
 OUTPUT_TEMPLATE = """<?xml version="1.0"?>
 <opencv_storage>
-  <camera_type>INSERT_CAMERA_TYPE_HERE</camera_type>
+  <camera_type></camera_type>
   <image_width>{width}</image_width>
   <image_height>{height}</image_height>
   <raw_camera_matrix type_id="opencv-matrix">
