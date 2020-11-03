@@ -57,20 +57,21 @@ import datetime
 
 OUTPUT_TEMPLATE = """<?xml version="1.0"?>
 <opencv_storage>
-    <image_width>{width}</image_width>
-    <image_height>{height}</image_height>
-    <raw_camera_matrix type_id="opencv-matrix">
-        <rows>3</rows>
-        <cols>3</cols>
-        <dt>d</dt>
-        <data>{camera_matrix}</data>
-    </raw_camera_matrix>
-    <distortion_coefficients type_id="opencv-matrix">
-        <rows>5</rows>
-        <cols>1</cols>
-        <dt>d</dt>
-        <data>{distortion_coefficients}</data>
-    </distortion_coefficients>
+  <camera_type>INSERT_CAMERA_TYPE_HERE</camera_type>
+  <image_width>{width}</image_width>
+  <image_height>{height}</image_height>
+  <raw_camera_matrix type_id="opencv-matrix">
+    <rows>3</rows>
+    <cols>3</cols>
+    <dt>d</dt>
+    <data>{camera_matrix}</data>
+  </raw_camera_matrix>
+  <distortion_coefficients type_id="opencv-matrix">
+    <rows>5</rows>
+    <cols>1</cols>
+    <dt>d</dt>
+    <data>{distortion_coefficients}</data>
+  </distortion_coefficients>
 </opencv_storage>"""
 
 # Supported camera models
